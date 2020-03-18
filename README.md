@@ -1,6 +1,4 @@
-# Project Title
-
-BE-NC-NEWS
+# BE-NC-NEWS
 
 ## Getting Started
 

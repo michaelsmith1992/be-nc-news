@@ -4,7 +4,7 @@
   "description": "bc-nc-news",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon listen.js",
+    "dev": "NODE_ENV=test nodemon listen.js",
     "start": "node listen.js",
     "migrate:make": "knex migrate:make",
     "migrate-latest": "knex migrate:latest",

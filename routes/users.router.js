@@ -1,6 +1,10 @@
-const usersRouter = require("express").Router();
-const { selectUser } = require("../controllers/users.controller")
+const usersRouter = require('express').Router();
+const { selectUser } = require('../controllers/users.controller');
+const incorrectMethod = require('../errors/405-error');
 
-usersRouter.get("/:username", selectUser)
+usersRouter
+  .route('/:username')
+  .get(selectUser)
+  .all(incorrectMethod);
 
 module.exports = usersRouter;

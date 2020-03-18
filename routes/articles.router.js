@@ -6,17 +6,20 @@ const {
   postComment,
   getComments
 } = require('../controllers/articles.controller');
+const incorrectMethod = require('../errors/405-error');
 
 articlesRouter.get('/', getArticles);
 
 articlesRouter
   .route('/:article_id')
   .get(getArticle)
-  .patch(patchArticle);
+  .patch(patchArticle)
+  .all(incorrectMethod);
 
 articlesRouter
   .route('/:article_id/comments')
   .post(postComment)
-  .get(getComments);
+  .get(getComments)
+  .all(incorrectMethod);
 
 module.exports = articlesRouter;

@@ -8,7 +8,10 @@ const {
 } = require('../controllers/articles.controller');
 const incorrectMethod = require('../errors/405-error');
 
-articlesRouter.get('/', getArticles);
+articlesRouter
+  .route('/')
+  .get(getArticles)
+  .all(incorrectMethod);
 
 articlesRouter
   .route('/:article_id')

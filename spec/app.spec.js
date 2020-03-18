@@ -416,7 +416,7 @@ describe('NC NEWS API TESTING', () => {
       return Promise.all(methodPromises);
     });
     it('/api/articles/:article_id/comments', () => {
-      const invalidMethods = ['post', 'put', 'delete'];
+      const invalidMethods = ['patch', 'put', 'delete'];
       const methodPromises = invalidMethods.map(method => {
         return request(app)
           [method]('/api/articles/1/comments')

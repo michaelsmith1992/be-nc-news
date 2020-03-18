@@ -378,4 +378,60 @@ describe('NC NEWS API TESTING', () => {
       });
     });
   });
+  describe('405 tests- INVALID METHODS', () => {
+    it('/api', () => {
+      const invalidMethods = ['post', 'patch', 'put', 'delete'];
+      const methodPromises = invalidMethods.map(method => {
+        return request(app)
+          [method]('/api')
+          .expect(405);
+      });
+      return Promise.all(methodPromises);
+    });
+    it('/api/topics', () => {
+      const invalidMethods = ['post', 'patch', 'put', 'delete'];
+      const methodPromises = invalidMethods.map(method => {
+        return request(app)
+          [method]('/api/topics')
+          .expect(405);
+      });
+      return Promise.all(methodPromises);
+    });
+    it('/api/articles', () => {
+      const invalidMethods = ['post', 'patch', 'put', 'delete'];
+      const methodPromises = invalidMethods.map(method => {
+        return request(app)
+          [method]('/api/articles')
+          .expect(405);
+      });
+      return Promise.all(methodPromises);
+    });
+    it('/api/articles/:article_id', () => {
+      const invalidMethods = ['post', 'put', 'delete'];
+      const methodPromises = invalidMethods.map(method => {
+        return request(app)
+          [method]('/api/articles/1')
+          .expect(405);
+      });
+      return Promise.all(methodPromises);
+    });
+    it('/api/articles/:article_id/comments', () => {
+      const invalidMethods = ['post', 'put', 'delete'];
+      const methodPromises = invalidMethods.map(method => {
+        return request(app)
+          [method]('/api/articles/1/comments')
+          .expect(405);
+      });
+      return Promise.all(methodPromises);
+    });
+    it('/api/comments/:comment_id', () => {
+      const invalidMethods = ['get', 'post', 'put'];
+      const methodPromises = invalidMethods.map(method => {
+        return request(app)
+          [method]('/api/comments/1')
+          .expect(405);
+      });
+      return Promise.all(methodPromises);
+    });
+  });
 });

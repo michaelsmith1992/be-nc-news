@@ -1,0 +1,43 @@
+{
+  "name": "be-nc-news",
+  "version": "1.0.0",
+  "description": "bc-nc-news",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon listen.js",
+    "start": "node listen.js",
+    "migrate:make": "knex migrate:make",
+    "migrate-latest": "knex migrate:latest",
+    "seed:prod": "NODE_ENV=production DB_URL=$(heroku config:get DATABASE_URL) knex seed:run",
+    "migrate-latest:prod": "NODE_ENV=production DB_URL=$(heroku config:get DATABASE_URL) knex migrate:latest",
+    "migrate-rollback:prod": "NODE_ENV=production DB_URL=$(heroku config:get DATABASE_URL) knex migrate:rollback",
+    "setup-dbs": "psql -f ./db/setup.sql",
+    "seed-test": "npm run setup-dbs && NODE_ENV=test knex seed:run",
+    "seed-dev": "npm run setup-dbs && knex seed:run",
+    "test-utils": "mocha spec/utils.spec.js",
+    "test": "NODE_ENV=test mocha spec"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/northcoders/be-nc-news.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/northcoders/be-nc-news/issues"
+  },
+  "homepage": "https://github.com/northcoders/be-nc-news#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "knex": "^0.20.11",
+    "nodemon": "^2.0.2",
+    "pg": "^7.18.2"
+  },
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "chai-sorted": "^0.2.0",
+    "supertest": "^4.0.2",
+    "mocha": "^7.1.0"
+  }
+}

@@ -1,0 +1,128 @@
+{
+  "GET /api": {
+    "description": "serves up a json representation of all the available endpoints of the api"
+  },
+  "GET /api/users/:username": {
+    "description": "serves an object of a specific user",
+    "exampleResponse": {
+      "user": {
+        "username": "rogersop",
+        "avatar_url": "https://avatars2.githubusercontent.com/u/24394918?s=400&v=4",
+        "name": "paul"
+      }
+    }
+  },
+  "GET /api/topics": {
+    "description": "serves an array of all topics",
+    "queries": [],
+    "exampleResponse": {
+      "topics": [
+        {
+          "slug": "football",
+          "description": "Footie!"
+        }
+      ]
+    }
+  },
+  "GET /api/articles": {
+    "description": "serves an array of all articles",
+    "queries": [
+      "author",
+      "topic",
+      "sort_by",
+      "order"
+    ],
+    "exampleResponse": {
+      "articles": [
+        {
+          "title": "Seafood substitutions are increasing",
+          "topic": "cooking",
+          "author": "weegembump",
+          "body": "Text from the article..",
+          "created_at": 1527695953341,
+          "votes": 0
+        }
+      ]
+    }
+  },
+  "GET /api/articles/:article_id": {
+    "description": "serves an object of a specific article",
+    "exampleResponse": {
+      "article": {
+        "title": "Seafood substitutions are increasing",
+        "topic": "cooking",
+        "author": "weegembump",
+        "body": "Text from the article..",
+        "created_at": 1527695953341,
+        "votes": 0
+      }
+    }
+  },
+  "PATCH /api/articles/:article_id": {
+    "description": "Updates the votes on a specific article and serves the updated article",
+    "exampleBody": {
+      "inc_votes": 100
+    },
+    "exampleResponse": {
+      "article": {
+        "title": "Seafood substitutions are increasing",
+        "topic": "cooking",
+        "author": "weegembump",
+        "body": "Text from the article..",
+        "created_at": 1527695953341,
+        "votes": 100
+      }
+    }
+  },
+  "GET /api/articles/:article_id/comments": {
+    "description": "serves an array of all the article comments",
+    "queries": [
+      "sort_by",
+      "order"
+    ],
+    "exampleResponse": {
+      "comments": [
+        {
+          "author": "test",
+          "votes": 0,
+          "created_at": "2020-03-18T13:58:54.357Z",
+          "body": "new comment!"
+        }
+      ]
+    }
+  },
+  "POST /api/articles/:article_id/comments": {
+    "description": "Creates a new comment for a specific article and serves the new comment",
+    "exampleBody": {
+      "username": "test",
+      "body": "new comment!"
+    },
+    "exampleResponse": {
+      "comment": {
+        "author": "test",
+        "article_id": 1,
+        "votes": 0,
+        "created_at": "2020-03-18T13:58:54.357Z",
+        "body": "new comment!"
+      }
+    }
+  },
+  "PATCH /api/comments/:comment_id": {
+    "description": "Updates the votes on a specific comment and serves the updated comment",
+    "exampleBody": {
+      "inc_votes": 100
+    },
+    "exampleResponse": {
+      "comment": {
+        "author": "test",
+        "article_id": 1,
+        "votes": 100,
+        "created_at": "2020-03-18T13:58:54.357Z",
+        "body": "new comment!"
+      }
+    }
+  },
+  "DELETE /api/comments/:comment_id": {
+    "description": "Deletes a specific comment"
+  }
+}

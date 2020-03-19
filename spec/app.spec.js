@@ -141,11 +141,23 @@ describe('NC NEWS API TESTING', () => {
           .send({ inc_votes: 1 })
           .expect(404);
       });
-      it('no body sent', () => {
+      it('no body sent and article exists', () => {
         return request(app)
           .patch('/api/articles/1')
           .send({})
-          .expect(400);
+          .expect(200)
+          .then(result => {
+            expect(result.body.article).to.have.all.keys([
+              'author',
+              'title',
+              'article_id',
+              'body',
+              'topic',
+              'comment_count',
+              'created_at',
+              'votes'
+            ]);
+          });
       });
       it('invalid inc_votes', () => {
         return request(app)
@@ -185,6 +197,18 @@ describe('NC NEWS API TESTING', () => {
         return request(app)
           .post('/api/articles/1/comments')
           .send({})
+          .expect(400);
+      });
+      it('username is missing from body', () => {
+        return request(app)
+          .post('/api/articles/1/comments')
+          .send({ body: 'test' })
+          .expect(400);
+      });
+      it('body is missing from body', () => {
+        return request(app)
+          .post('/api/articles/1/comments')
+          .send({ username: 'rogersop' })
           .expect(400);
       });
     });
@@ -235,6 +259,14 @@ describe('NC NEWS API TESTING', () => {
         return request(app)
           .get('/api/articles/0/comments')
           .expect(404);
+      });
+      it('article_id in db, but no comments', () => {
+        return request(app)
+          .get('/api/articles/2/comments')
+          .expect(200)
+          .then(result => {
+            expect(result.body.comments).to.eql([]);
+          });
       });
     });
   });
@@ -311,9 +343,25 @@ describe('NC NEWS API TESTING', () => {
           .get('/api/articles?topic=rats')
           .expect(404);
       });
-      it('filters by topic - topic exist, but no articles', () => {
+      it('filters by topic - topic exists, but no articles', () => {
         return request(app)
           .get('/api/articles?topic=paper')
+          .expect(200)
+          .then(result => {
+            expect(result.body.articles).to.eql([]);
+          });
+      });
+      it('filters by author - author exists, but no articles', () => {
+        return request(app)
+          .get('/api/articles?author=lurker')
+          .expect(200)
+          .then(result => {
+            expect(result.body.articles).to.eql([]);
+          });
+      });
+      it('filters by author  & topic - author exists, topic doesnt, but no articles', () => {
+        return request(app)
+          .get('/api/articles?author=lurker&topic=rats')
           .expect(404);
       });
     });
@@ -362,7 +410,7 @@ describe('NC NEWS API TESTING', () => {
         return request(app)
           .patch('/api/comments/1')
           .send({})
-          .expect(400);
+          .expect(200);
       });
     });
     context('DELETE', () => {
@@ -432,6 +480,67 @@ describe('NC NEWS API TESTING', () => {
           .expect(405);
       });
       return Promise.all(methodPromises);
+    });
+  });
+  describe('pagination', () => {
+    context('/api/articles', () => {
+      it('limit is 5 return first page', () => {
+        return request(app)
+          .get('/api/articles?limit=5&p=1')
+          .expect(200)
+          .then(result => {
+            expect(result.body.total_count).to.equal(12);
+            expect(result.body.articles.length).to.equal(5);
+            expect(result.body.articles[0].article_id).to.equal(1);
+            expect(result.body.articles[4].article_id).to.equal(5);
+          });
+      });
+      it('limit is 2 return 2nd page', () => {
+        return request(app)
+          .get('/api/articles?limit=2&p=2')
+          .expect(200)
+          .then(result => {
+            expect(result.body.total_count).to.equal(12);
+            expect(result.body.articles.length).to.equal(2);
+            expect(result.body.articles[0].article_id).to.equal(3);
+            expect(result.body.articles[1].article_id).to.equal(4);
+          });
+      });
+      it('limit is 5 return 1st page and topic filter is mitch', () => {
+        return request(app)
+          .get('/api/articles?limit=5&p=1&topic=mitch')
+          .expect(200)
+          .then(result => {
+            expect(result.body.total_count).to.equal(11);
+            expect(result.body.articles.length).to.equal(5);
+            expect(result.body.articles[0].article_id).to.equal(1);
+            expect(result.body.articles[4].article_id).to.equal(6);
+          });
+      });
+    });
+    context('/api/articles/:article_id/comments', () => {
+      it('limit is 5 return first page', () => {
+        return request(app)
+          .get('/api/articles/1/comments?limit=5&p=1')
+          .expect(200)
+          .then(result => {
+            expect(result.body.total_count).to.equal(13);
+            expect(result.body.comments.length).to.equal(5);
+            expect(result.body.comments[0].comment_id).to.equal(2);
+            expect(result.body.comments[4].comment_id).to.equal(6);
+          });
+      });
+      it('limit is 2 return 2nd page', () => {
+        return request(app)
+          .get('/api/articles/1/comments?limit=2&p=2')
+          .expect(200)
+          .then(result => {
+            expect(result.body.total_count).to.equal(13);
+            expect(result.body.comments.length).to.equal(2);
+            expect(result.body.comments[0].comment_id).to.equal(4);
+            expect(result.body.comments[1].comment_id).to.equal(5);
+          });
+      });
     });
   });
 });

@@ -17,7 +17,7 @@ function getArticle(req, res, next) {
 function getArticles(req, res, next) {
   selectArticles(req.query)
     .then(articles => {
-      res.send({ articles });
+      res.send(articles);
     })
     .catch(next);
 }
@@ -41,7 +41,7 @@ function postComment(req, res, next) {
 function getComments(req, res, next) {
   selectComments(req.params.article_id, req.query)
     .then(comments => {
-      res.send({ comments });
+      res.send(comments);
     })
     .catch(next);
 }

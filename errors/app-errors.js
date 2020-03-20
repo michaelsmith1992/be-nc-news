@@ -6,7 +6,7 @@ function errorHandler(err, req, res, next) {
     },
     '23503': {
       status: 404,
-      msg: 'No article found to add a comment'
+      msg: 'Not found!'
     },
     '23502': {
       status: 400,

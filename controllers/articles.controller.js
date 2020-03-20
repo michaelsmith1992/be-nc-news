@@ -3,7 +3,8 @@ const {
   selectArticles,
   updateArticle,
   insertComment,
-  selectComments
+  selectComments,
+  insertArticle
 } = require('../models/articles.models');
 
 function getArticle(req, res, next) {
@@ -46,10 +47,19 @@ function getComments(req, res, next) {
     .catch(next);
 }
 
+function postArticles(req, res, next) {
+  insertArticle(req.body)
+    .then(article => {
+      res.status(201).send({ article });
+    })
+    .catch(next);
+}
+
 module.exports = {
   getArticle,
   patchArticle,
   postComment,
   getComments,
-  getArticles
+  getArticles,
+  postArticles
 };

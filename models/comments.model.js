@@ -33,7 +33,7 @@ function selectComment(comment_id) {
     .then(result => {
       if (!result.length)
         return Promise.reject({ msg: 'Comment not found!', status: 404 });
-      return result;
+      return result[0];
     });
 }
 

@@ -127,10 +127,20 @@ function commentQuery(article_id, query) {
     });
 }
 
+function insertArticle({ title, body, topic, author, votes = 0 }) {
+  return client('articles')
+    .insert({ title, body, topic, author, votes })
+    .returning('*')
+    .then(result => {
+      return result[0];
+    });
+}
+
 module.exports = {
   selectArticle,
   selectArticles,
   updateArticle,
   insertComment,
-  selectComments
+  selectComments,
+  insertArticle
 };

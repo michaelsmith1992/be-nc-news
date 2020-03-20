@@ -2,6 +2,7 @@ const articlesRouter = require('express').Router();
 const {
   getArticle,
   getArticles,
+  postArticles,
   patchArticle,
   postComment,
   getComments
@@ -11,6 +12,7 @@ const incorrectMethod = require('../errors/405-error');
 articlesRouter
   .route('/')
   .get(getArticles)
+  .post(postArticles)
   .all(incorrectMethod);
 
 articlesRouter

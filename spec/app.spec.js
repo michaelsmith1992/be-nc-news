@@ -271,6 +271,107 @@ describe('NC NEWS API TESTING', () => {
     });
   });
   describe('/api/articles', () => {
+    context('POST', () => {
+      it('create a new article', () => {
+        return request(app)
+          .post('/api/articles/')
+          .send({
+            title: 'test',
+            body: 'test2',
+            topic: 'mitch',
+            author: 'butter_bridge'
+          })
+          .expect(201)
+          .then(result => {
+            expect(result.body.article.title).to.equal('test');
+            expect(result.body.article.body).to.equal('test2');
+            expect(result.body.article.topic).to.equal('mitch');
+            expect(result.body.article.author).to.equal('butter_bridge');
+            expect(result.body.article.votes).to.equal(0);
+            expect(result.body.article).to.have.all.keys([
+              'author',
+              'title',
+              'article_id',
+              'body',
+              'topic',
+              'created_at',
+              'votes'
+            ]);
+          });
+      });
+      it('create a new article', () => {
+        return request(app)
+          .post('/api/articles/')
+          .send({
+            title: 'test',
+            body: 'test2',
+            topic: 'mitch',
+            author: 'butter_bridge'
+          })
+          .expect(201)
+          .then(result => {
+            expect(result.body.article.title).to.equal('test');
+            expect(result.body.article.body).to.equal('test2');
+            expect(result.body.article.topic).to.equal('mitch');
+            expect(result.body.article.author).to.equal('butter_bridge');
+            expect(result.body.article.votes).to.equal(0);
+            expect(result.body.article).to.have.all.keys([
+              'author',
+              'title',
+              'article_id',
+              'body',
+              'topic',
+              'created_at',
+              'votes'
+            ]);
+          });
+      });
+      it('create a new article with added vote', () => {
+        return request(app)
+          .post('/api/articles/')
+          .send({
+            title: 'test',
+            body: 'test2',
+            topic: 'mitch',
+            author: 'butter_bridge',
+            votes: 10
+          })
+          .expect(201)
+          .then(result => {
+            expect(result.body.article.votes).to.equal(10);
+          });
+      });
+      it('invalid user', () => {
+        return request(app)
+          .post('/api/articles/')
+          .send({
+            title: 'test',
+            body: 'test2',
+            topic: 'mitch',
+            author: 'butter_bridge2',
+            votes: 10
+          })
+          .expect(404);
+      });
+      it('no body', () => {
+        return request(app)
+          .post('/api/articles/')
+          .send({})
+          .expect(400);
+      });
+      it('incorrect data type', () => {
+        return request(app)
+          .post('/api/articles/')
+          .send({
+            title: 'test',
+            body: 'test2',
+            topic: 'mitch',
+            author: 'butter_bridge',
+            votes: 'test'
+          })
+          .expect(400);
+      });
+    });
     context('GET', () => {
       it('returns all the articles', () => {
         return request(app)
@@ -410,7 +511,18 @@ describe('NC NEWS API TESTING', () => {
         return request(app)
           .patch('/api/comments/1')
           .send({})
-          .expect(200);
+          .expect(200)
+          .then(result => {
+            expect(result.body.comment).to.have.all.keys([
+              'author',
+              'comment_id',
+              'article_id',
+              'body',
+              'created_at',
+              'votes'
+            ]);
+            expect(result.body.comment.votes).to.equal(16);
+          });
       });
     });
     context('DELETE', () => {
@@ -446,7 +558,7 @@ describe('NC NEWS API TESTING', () => {
       return Promise.all(methodPromises);
     });
     it('/api/articles', () => {
-      const invalidMethods = ['post', 'patch', 'put', 'delete'];
+      const invalidMethods = ['patch', 'put', 'delete'];
       const methodPromises = invalidMethods.map(method => {
         return request(app)
           [method]('/api/articles')

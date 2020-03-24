@@ -1,4 +1,5 @@
 function errorHandler(err, req, res, next) {
+  console.log(err);
   const psqlError = {
     '22P02': {
       status: 400,

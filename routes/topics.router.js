@@ -1,6 +1,6 @@
 const topicsRouter = require('express').Router();
 const { selectTopics } = require('../controllers/topics.controller');
-const incorrectMethod = require('../errors/405-error');
+const incorrectMethod = require('../middleware/405-error');
 
 topicsRouter
   .route('/')

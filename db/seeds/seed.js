@@ -13,6 +13,7 @@ const {
 } = require('../utils/utils');
 
 exports.seed = async function(knex) {
+  console.log(process.env.NODE_ENV);
   const userHashedPass = await hashUserPass(userData);
   console.log(userHashedPass);
   return knex.migrate

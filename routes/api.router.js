@@ -4,10 +4,10 @@ const usersRouter = require('./users.router');
 const articlesRouter = require('./articles.router');
 const commentsRouter = require('./comments.router');
 const { getApiRoutes, login } = require('../controllers/api.controller');
-const { auth } = require('../middleware/auth');
+// const { auth } = require('../middleware/auth');
 const incorrectMethod = require('../middleware/405-error');
 
-apiRouter.use('/topics', auth, topicsRouter);
+apiRouter.use('/topics', topicsRouter);
 apiRouter.use('/users', usersRouter);
 apiRouter.use('/articles', articlesRouter);
 apiRouter.use('/comments', commentsRouter);

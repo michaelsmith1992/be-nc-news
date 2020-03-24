@@ -14,8 +14,8 @@ const {
 
 exports.seed = async function(knex) {
   console.log(process.env.NODE_ENV);
-  const userHashedPass = await hashUserPass(userData);
-  console.log(userHashedPass);
+  // const userHashedPass = await hashUserPass(userData);
+  // console.log(userHashedPass);
   return knex.migrate
     .rollback()
     .then(() => {
@@ -26,7 +26,7 @@ exports.seed = async function(knex) {
         .insert(topicData)
         .returning('*');
       const usersInsertions = knex('users')
-        .insert(userHashedPass)
+        .insert(userData)
         .returning('*');
       return Promise.all([topicsInsertions, usersInsertions]);
     })

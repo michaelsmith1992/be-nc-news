@@ -16,7 +16,14 @@ async function getUserToken({ username, password }) {
   const check = await bcrypt.compare(password, user[0].password);
   console.log(check);
   if (check) {
-    return { token: tokenGen(username), user };
+    return {
+      token: tokenGen(username),
+      user: {
+        username: user[0].username,
+        avatar_url: user[0].avatar_url,
+        name: user[0].name
+      }
+    };
   } else {
     throw new Error({ status: 403, msg: 'Incorrect Password!' });
   }

@@ -11,8 +11,8 @@ async function getApiRoutes(req, res, next) {
 
 async function login(req, res, next) {
   try {
-    const token = await getUserToken(req.body);
-    res.send({ token });
+    const user = await getUserToken(req.body);
+    res.send(user);
   } catch (err) {
     next(err);
   }

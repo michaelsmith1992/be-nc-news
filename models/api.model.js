@@ -12,9 +12,7 @@ async function getUserToken({ username, password }) {
   const user = await client('users')
     .select('*')
     .where({ username });
-  console.log(user);
   const check = await bcrypt.compare(password, user[0].password);
-  console.log(check);
   if (check) {
     return {
       token: tokenGen(username),

@@ -5,12 +5,20 @@ const apiRouter = require('./routes/api.router');
 const { formatDB } = require('./db/utils/utils');
 const errorHandler = require('./middleware/app-errors');
 
-var allowedOrigins = ['http://localhost:8080'];
-app.use(
-  cors({
-    origin: 'http://localhost:8080'
-  })
-);
+const whitelist = [
+  'http://localhost:8080',
+  'https://msmith-vue-news-fe.herokuapp.com/'
+];
+const corsOptions = {
+  origin: function(origin, callback) {
+    if (whitelist.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  }
+};
+app.use(corsOptions);
 
 app.use(express.json());
 

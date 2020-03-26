@@ -7,7 +7,7 @@ const errorHandler = require('./middleware/app-errors');
 
 const whitelist = [
   'http://localhost:8080',
-  'https://msmith-vue-news-fe.herokuapp.com/'
+  'https://msmith-vue-news-fe.herokuapp.com'
 ];
 const corsOptions = {
   origin: function(origin, callback) {

@@ -21,7 +21,7 @@ describe('NC NEWS API TESTING', () => {
       request(app)
         .get('/api')
         .expect(200)
-        .then(result => {
+        .then((result) => {
           expect(result.body.api).to.be.an('object');
         });
     });
@@ -32,7 +32,7 @@ describe('NC NEWS API TESTING', () => {
       return request(app)
         .get('/api/topics')
         .expect(200)
-        .then(res => {
+        .then((res) => {
           expect(res.body.topics[0]).to.have.all.keys(['slug', 'description']);
           expect(res.body.topics[0].slug).to.equal('mitch');
           expect(res.body.topics[0].description).to.equal(
@@ -47,11 +47,12 @@ describe('NC NEWS API TESTING', () => {
       return request(app)
         .get('/api/users/rogersop')
         .expect(200)
-        .then(res => {
+        .then((res) => {
           expect(res.body.user).to.have.all.keys([
             'username',
             'avatar_url',
-            'name'
+            'name',
+            'password',
           ]);
           expect(res.body.user.username).to.equal('rogersop');
           expect(res.body.user.name).to.equal('paul');
@@ -61,9 +62,7 @@ describe('NC NEWS API TESTING', () => {
         });
     });
     it('GET request with user name not in db', () => {
-      return request(app)
-        .get('/api/users/mike')
-        .expect(404);
+      return request(app).get('/api/users/mike').expect(404);
     });
   });
 
@@ -73,7 +72,7 @@ describe('NC NEWS API TESTING', () => {
         return request(app)
           .get('/api/articles/1')
           .expect(200)
-          .then(result => {
+          .then((result) => {
             expect(result.body.article).to.have.all.keys([
               'author',
               'title',
@@ -82,20 +81,16 @@ describe('NC NEWS API TESTING', () => {
               'topic',
               'created_at',
               'votes',
-              'comment_count'
+              'comment_count',
             ]);
             expect(result.body.article.comment_count).to.equal(13);
           });
       });
       it('article_id not in db', () => {
-        return request(app)
-          .get('/api/articles/0')
-          .expect(404);
+        return request(app).get('/api/articles/0').expect(404);
       });
       it('bad article_id', () => {
-        return request(app)
-          .get('/api/articles/mike')
-          .expect(400);
+        return request(app).get('/api/articles/mike').expect(400);
       });
     });
     context('PATCH', () => {
@@ -104,7 +99,7 @@ describe('NC NEWS API TESTING', () => {
           .patch('/api/articles/1')
           .send({ inc_votes: 1 })
           .expect(200)
-          .then(result => {
+          .then((result) => {
             expect(result.body.article).to.have.all.keys([
               'author',
               'title',
@@ -112,7 +107,7 @@ describe('NC NEWS API TESTING', () => {
               'body',
               'topic',
               'created_at',
-              'votes'
+              'votes',
             ]);
             expect(result.body.article.votes).to.equal(101);
           });
@@ -122,7 +117,7 @@ describe('NC NEWS API TESTING', () => {
           .patch('/api/articles/1')
           .send({ inc_votes: -50 })
           .expect(200)
-          .then(result => {
+          .then((result) => {
             expect(result.body.article).to.have.all.keys([
               'author',
               'title',
@@ -130,7 +125,7 @@ describe('NC NEWS API TESTING', () => {
               'body',
               'topic',
               'created_at',
-              'votes'
+              'votes',
             ]);
             expect(result.body.article.votes).to.equal(50);
           });
@@ -146,7 +141,7 @@ describe('NC NEWS API TESTING', () => {
           .patch('/api/articles/1')
           .send({})
           .expect(200)
-          .then(result => {
+          .then((result) => {
             expect(result.body.article).to.have.all.keys([
               'author',
               'title',
@@ -155,7 +150,7 @@ describe('NC NEWS API TESTING', () => {
               'topic',
               'comment_count',
               'created_at',
-              'votes'
+              'votes',
             ]);
           });
       });
@@ -174,14 +169,14 @@ describe('NC NEWS API TESTING', () => {
           .post('/api/articles/1/comments')
           .send({ username: 'rogersop', body: 'new Comment' })
           .expect(201)
-          .then(result => {
+          .then((result) => {
             expect(result.body.comment).to.have.all.keys([
               'comment_id',
               'author',
               'article_id',
               'votes',
               'created_at',
-              'body'
+              'body',
             ]);
             expect(result.body.comment.author).to.equal('rogersop');
             expect(result.body.comment.body).to.equal('new Comment');
@@ -217,13 +212,13 @@ describe('NC NEWS API TESTING', () => {
         return request(app)
           .get('/api/articles/1/comments')
           .expect(200)
-          .then(result => {
+          .then((result) => {
             expect(result.body.comments[0]).to.have.all.keys([
               'comment_id',
               'author',
               'votes',
               'created_at',
-              'body'
+              'body',
             ]);
           });
       });
@@ -231,9 +226,9 @@ describe('NC NEWS API TESTING', () => {
         return request(app)
           .get('/api/articles/1/comments?sort_by=created_at')
           .expect(200)
-          .then(result => {
+          .then((result) => {
             expect(result.body.comments).to.be.sortedBy('created_at', {
-              descending: true
+              descending: true,
             });
           });
       });
@@ -241,7 +236,7 @@ describe('NC NEWS API TESTING', () => {
         return request(app)
           .get('/api/articles/1/comments?sort_by=comment_id&order=asc')
           .expect(200)
-          .then(result => {
+          .then((result) => {
             expect(result.body.comments).to.be.sortedBy('comment_id');
           });
       });
@@ -256,15 +251,13 @@ describe('NC NEWS API TESTING', () => {
           .expect(400);
       });
       it('article_id not in db', () => {
-        return request(app)
-          .get('/api/articles/0/comments')
-          .expect(404);
+        return request(app).get('/api/articles/0/comments').expect(404);
       });
       it('article_id in db, but no comments', () => {
         return request(app)
           .get('/api/articles/2/comments')
           .expect(200)
-          .then(result => {
+          .then((result) => {
             expect(result.body.comments).to.eql([]);
           });
       });
@@ -279,10 +272,10 @@ describe('NC NEWS API TESTING', () => {
             title: 'test',
             body: 'test2',
             topic: 'mitch',
-            author: 'butter_bridge'
+            author: 'butter_bridge',
           })
           .expect(201)
-          .then(result => {
+          .then((result) => {
             expect(result.body.article.title).to.equal('test');
             expect(result.body.article.body).to.equal('test2');
             expect(result.body.article.topic).to.equal('mitch');
@@ -295,7 +288,7 @@ describe('NC NEWS API TESTING', () => {
               'body',
               'topic',
               'created_at',
-              'votes'
+              'votes',
             ]);
           });
       });
@@ -306,10 +299,10 @@ describe('NC NEWS API TESTING', () => {
             title: 'test',
             body: 'test2',
             topic: 'mitch',
-            author: 'butter_bridge'
+            author: 'butter_bridge',
           })
           .expect(201)
-          .then(result => {
+          .then((result) => {
             expect(result.body.article.title).to.equal('test');
             expect(result.body.article.body).to.equal('test2');
             expect(result.body.article.topic).to.equal('mitch');
@@ -322,7 +315,7 @@ describe('NC NEWS API TESTING', () => {
               'body',
               'topic',
               'created_at',
-              'votes'
+              'votes',
             ]);
           });
       });
@@ -334,10 +327,10 @@ describe('NC NEWS API TESTING', () => {
             body: 'test2',
             topic: 'mitch',
             author: 'butter_bridge',
-            votes: 10
+            votes: 10,
           })
           .expect(201)
-          .then(result => {
+          .then((result) => {
             expect(result.body.article.votes).to.equal(10);
           });
       });
@@ -349,15 +342,12 @@ describe('NC NEWS API TESTING', () => {
             body: 'test2',
             topic: 'mitch',
             author: 'butter_bridge2',
-            votes: 10
+            votes: 10,
           })
           .expect(404);
       });
       it('no body', () => {
-        return request(app)
-          .post('/api/articles/')
-          .send({})
-          .expect(400);
+        return request(app).post('/api/articles/').send({}).expect(400);
       });
       it('incorrect data type', () => {
         return request(app)
@@ -367,7 +357,7 @@ describe('NC NEWS API TESTING', () => {
             body: 'test2',
             topic: 'mitch',
             author: 'butter_bridge',
-            votes: 'test'
+            votes: 'test',
           })
           .expect(400);
       });
@@ -377,7 +367,7 @@ describe('NC NEWS API TESTING', () => {
         return request(app)
           .get('/api/articles')
           .expect(200)
-          .then(result => {
+          .then((result) => {
             expect(result.body.articles[0]).to.have.all.keys([
               'author',
               'title',
@@ -386,7 +376,7 @@ describe('NC NEWS API TESTING', () => {
               'topic',
               'created_at',
               'votes',
-              'comment_count'
+              'comment_count',
             ]);
             expect(result.body.articles[0].votes).to.equal(100);
           });
@@ -395,9 +385,9 @@ describe('NC NEWS API TESTING', () => {
         return request(app)
           .get('/api/articles?sort_by=created_at')
           .expect(200)
-          .then(result => {
+          .then((result) => {
             expect(result.body.articles).to.be.sortedBy('created_at', {
-              descending: true
+              descending: true,
             });
           });
       });
@@ -405,7 +395,7 @@ describe('NC NEWS API TESTING', () => {
         return request(app)
           .get('/api/articles?sort_by=article_id&order=asc')
           .expect(200)
-          .then(result => {
+          .then((result) => {
             expect(result.body.articles).to.be.sortedBy('article_id');
           });
       });
@@ -423,8 +413,8 @@ describe('NC NEWS API TESTING', () => {
         return request(app)
           .get('/api/articles?author=rogersop')
           .expect(200)
-          .then(result => {
-            result.body.articles.forEach(article => {
+          .then((result) => {
+            result.body.articles.forEach((article) => {
               expect(article.author).to.equal('rogersop');
             });
           });
@@ -433,22 +423,20 @@ describe('NC NEWS API TESTING', () => {
         return request(app)
           .get('/api/articles?topic=cats')
           .expect(200)
-          .then(result => {
-            result.body.articles.forEach(article => {
+          .then((result) => {
+            result.body.articles.forEach((article) => {
               expect(article.topic).to.equal('cats');
             });
           });
       });
       it('filters by topic - non existing', () => {
-        return request(app)
-          .get('/api/articles?topic=rats')
-          .expect(404);
+        return request(app).get('/api/articles?topic=rats').expect(404);
       });
       it('filters by topic - topic exists, but no articles', () => {
         return request(app)
           .get('/api/articles?topic=paper')
           .expect(200)
-          .then(result => {
+          .then((result) => {
             expect(result.body.articles).to.eql([]);
           });
       });
@@ -456,7 +444,7 @@ describe('NC NEWS API TESTING', () => {
         return request(app)
           .get('/api/articles?author=lurker')
           .expect(200)
-          .then(result => {
+          .then((result) => {
             expect(result.body.articles).to.eql([]);
           });
       });
@@ -472,14 +460,14 @@ describe('NC NEWS API TESTING', () => {
           .patch('/api/comments/1')
           .send({ inc_votes: 1 })
           .expect(200)
-          .then(result => {
+          .then((result) => {
             expect(result.body.comment).to.have.all.keys([
               'author',
               'comment_id',
               'article_id',
               'body',
               'created_at',
-              'votes'
+              'votes',
             ]);
             expect(result.body.comment.votes).to.equal(17);
           });
@@ -489,14 +477,14 @@ describe('NC NEWS API TESTING', () => {
           .patch('/api/comments/1')
           .send({ inc_votes: -50 })
           .expect(200)
-          .then(result => {
+          .then((result) => {
             expect(result.body.comment).to.have.all.keys([
               'author',
               'comment_id',
               'article_id',
               'body',
               'created_at',
-              'votes'
+              'votes',
             ]);
             expect(result.body.comment.votes).to.equal(-34);
           });
@@ -512,14 +500,14 @@ describe('NC NEWS API TESTING', () => {
           .patch('/api/comments/1')
           .send({})
           .expect(200)
-          .then(result => {
+          .then((result) => {
             expect(result.body.comment).to.have.all.keys([
               'author',
               'comment_id',
               'article_id',
               'body',
               'created_at',
-              'votes'
+              'votes',
             ]);
             expect(result.body.comment.votes).to.equal(16);
           });
@@ -527,69 +515,53 @@ describe('NC NEWS API TESTING', () => {
     });
     context('DELETE', () => {
       it('should delete comment and return 204', () => {
-        return request(app)
-          .delete('/api/comments/1')
-          .expect(204);
+        return request(app).delete('/api/comments/1').expect(204);
       });
       it('invalid comment id should return 404', () => {
-        return request(app)
-          .delete('/api/comments/0')
-          .expect(404);
+        return request(app).delete('/api/comments/0').expect(404);
       });
     });
   });
   describe('405 tests- INVALID METHODS', () => {
     it('/api', () => {
       const invalidMethods = ['post', 'patch', 'put', 'delete'];
-      const methodPromises = invalidMethods.map(method => {
-        return request(app)
-          [method]('/api')
-          .expect(405);
+      const methodPromises = invalidMethods.map((method) => {
+        return request(app)[method]('/api').expect(405);
       });
       return Promise.all(methodPromises);
     });
     it('/api/topics', () => {
       const invalidMethods = ['post', 'patch', 'put', 'delete'];
-      const methodPromises = invalidMethods.map(method => {
-        return request(app)
-          [method]('/api/topics')
-          .expect(405);
+      const methodPromises = invalidMethods.map((method) => {
+        return request(app)[method]('/api/topics').expect(405);
       });
       return Promise.all(methodPromises);
     });
     it('/api/articles', () => {
       const invalidMethods = ['patch', 'put', 'delete'];
-      const methodPromises = invalidMethods.map(method => {
-        return request(app)
-          [method]('/api/articles')
-          .expect(405);
+      const methodPromises = invalidMethods.map((method) => {
+        return request(app)[method]('/api/articles').expect(405);
       });
       return Promise.all(methodPromises);
     });
     it('/api/articles/:article_id', () => {
       const invalidMethods = ['post', 'put', 'delete'];
-      const methodPromises = invalidMethods.map(method => {
-        return request(app)
-          [method]('/api/articles/1')
-          .expect(405);
+      const methodPromises = invalidMethods.map((method) => {
+        return request(app)[method]('/api/articles/1').expect(405);
       });
       return Promise.all(methodPromises);
     });
     it('/api/articles/:article_id/comments', () => {
       const invalidMethods = ['patch', 'put', 'delete'];
-      const methodPromises = invalidMethods.map(method => {
-        return request(app)
-          [method]('/api/articles/1/comments')
-          .expect(405);
+      const methodPromises = invalidMethods.map((method) => {
+        return request(app)[method]('/api/articles/1/comments').expect(405);
       });
       return Promise.all(methodPromises);
     });
     it('/api/comments/:comment_id', () => {
       const invalidMethods = ['get', 'post', 'put'];
-      const methodPromises = invalidMethods.map(method => {
-        return request(app)
-          [method]('/api/comments/1')
-          .expect(405);
+      const methodPromises = invalidMethods.map((method) => {
+        return request(app)[method]('/api/comments/1').expect(405);
       });
       return Promise.all(methodPromises);
     });
@@ -600,7 +572,7 @@ describe('NC NEWS API TESTING', () => {
         return request(app)
           .get('/api/articles?limit=5&p=1')
           .expect(200)
-          .then(result => {
+          .then((result) => {
             expect(result.body.total_count).to.equal(12);
             expect(result.body.articles.length).to.equal(5);
             expect(result.body.articles[0].article_id).to.equal(1);
@@ -611,7 +583,7 @@ describe('NC NEWS API TESTING', () => {
         return request(app)
           .get('/api/articles?limit=2&p=2')
           .expect(200)
-          .then(result => {
+          .then((result) => {
             expect(result.body.total_count).to.equal(12);
             expect(result.body.articles.length).to.equal(2);
             expect(result.body.articles[0].article_id).to.equal(3);
@@ -622,7 +594,7 @@ describe('NC NEWS API TESTING', () => {
         return request(app)
           .get('/api/articles?limit=5&p=1&topic=mitch')
           .expect(200)
-          .then(result => {
+          .then((result) => {
             expect(result.body.total_count).to.equal(11);
             expect(result.body.articles.length).to.equal(5);
             expect(result.body.articles[0].article_id).to.equal(1);
@@ -635,7 +607,7 @@ describe('NC NEWS API TESTING', () => {
         return request(app)
           .get('/api/articles/1/comments?limit=5&p=1')
           .expect(200)
-          .then(result => {
+          .then((result) => {
             expect(result.body.total_count).to.equal(13);
             expect(result.body.comments.length).to.equal(5);
             expect(result.body.comments[0].comment_id).to.equal(2);
@@ -646,7 +618,7 @@ describe('NC NEWS API TESTING', () => {
         return request(app)
           .get('/api/articles/1/comments?limit=2&p=2')
           .expect(200)
-          .then(result => {
+          .then((result) => {
             expect(result.body.total_count).to.equal(13);
             expect(result.body.comments.length).to.equal(2);
             expect(result.body.comments[0].comment_id).to.equal(4);

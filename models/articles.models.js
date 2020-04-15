@@ -9,7 +9,7 @@ function selectArticle(article_id) {
     .where({ 'articles.article_id': article_id })
     .leftJoin('comments', 'comments.article_id', 'articles.article_id')
     .groupBy('articles.article_id')
-    .then(result => {
+    .then((result) => {
       if (!result.length)
         return Promise.reject({ status: 404, msg: 'No articles found!' });
       return result[0];
@@ -24,7 +24,7 @@ function selectArticles(query) {
     articleQuery(query),
     articleQuery(newQuery),
     query.author ? getUser(query.author) : undefined,
-    query.topic ? getTopics(query.topic) : undefined
+    query.topic ? getTopics(query.topic) : undefined,
   ]).then(([result, rowCount, author, topic]) => {
     if (query.author && author && !result.length) result = [];
     else if (query.author && !author) {
@@ -36,7 +36,7 @@ function selectArticles(query) {
     }
     return {
       total_count: rowCount.length,
-      articles: result
+      articles: result,
     };
   });
 }
@@ -49,7 +49,7 @@ function updateArticle(article_id, votes) {
     .increment({ votes })
     .where({ article_id })
     .returning('*')
-    .then(result => {
+    .then((result) => {
       if (!result.length) {
         return Promise.reject({ status: 404, msg: 'No articles found!' });
       }
@@ -61,7 +61,7 @@ function insertComment(article_id, { username, body }) {
   return client('comments')
     .insert({ author: username, article_id, body })
     .returning('*')
-    .then(result => {
+    .then((result) => {
       return result[0];
     });
 }
@@ -72,14 +72,14 @@ function selectComments(article_id, query) {
   countQuery.p = null;
   return Promise.all([
     commentQuery(article_id, query),
-    commentQuery(article_id, countQuery)
+    commentQuery(article_id, countQuery),
   ]).then(([result, count]) => {
     if (!result.length)
       return selectArticle(article_id)
         .then(() => {
           return { comments: [], total_count: count.length };
         })
-        .catch(err => {
+        .catch((err) => {
           return Promise.reject({ status: 404, msg: 'No comments found!' });
         });
     return { comments: result, total_count: count.length };
@@ -93,18 +93,20 @@ function articleQuery(query) {
     author,
     topic,
     limit = 10,
-    p = 1
+    p = 1,
   } = query;
   if (order !== 'asc' && order !== 'desc') {
     return Promise.reject({ code: '42703' });
   }
+  const sortStr =
+    sort_by === 'comment_count' ? 'comment_count' : `articles.${sort_by}`;
   return client('articles')
     .select('articles.*')
     .count('comments.comment_id AS comment_count')
     .leftJoin('comments', 'comments.article_id', 'articles.article_id')
-    .orderBy(`articles.${sort_by}`, order)
+    .orderBy(sortStr, order)
     .groupBy('articles.article_id')
-    .modify(queryBuilder => {
+    .modify((queryBuilder) => {
       if (author) queryBuilder.where({ 'articles.author': author });
       if (topic) queryBuilder.where({ 'articles.topic': topic });
       if (limit !== null && p !== null)
@@ -121,7 +123,7 @@ function commentQuery(article_id, query) {
     .select('comment_id', 'author', 'votes', 'created_at', 'body')
     .where({ article_id })
     .orderBy(sort_by, order)
-    .modify(queryBuilder => {
+    .modify((queryBuilder) => {
       if (limit !== null && p !== null)
         queryBuilder.limit(limit).offset(limit * p - limit);
     });
@@ -131,7 +133,7 @@ function insertArticle({ title, body, topic, author, votes = 0 }) {
   return client('articles')
     .insert({ title, body, topic, author, votes })
     .returning('*')
-    .then(result => {
+    .then((result) => {
       return result[0];
     });
 }
@@ -142,5 +144,5 @@ module.exports = {
   updateArticle,
   insertComment,
   selectComments,
-  insertArticle
+  insertArticle,
 };

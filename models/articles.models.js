@@ -57,6 +57,17 @@ function updateArticle(article_id, votes) {
     });
 }
 
+function deleteArticle(article_id) {
+  return client('articles')
+    .where({ article_id })
+    .del()
+    .then((result) => {
+      if (result === 0)
+        return Promise.reject({ msg: 'Article not found!', status: 404 });
+      return result;
+    });
+}
+
 function insertComment(article_id, { username, body }) {
   return client('comments')
     .insert({ author: username, article_id, body })
@@ -145,4 +156,5 @@ module.exports = {
   insertComment,
   selectComments,
   insertArticle,
+  deleteArticle,
 };

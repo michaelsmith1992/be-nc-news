@@ -5,7 +5,8 @@ const {
   postArticles,
   patchArticle,
   postComment,
-  getComments
+  getComments,
+  removeArticle,
 } = require('../controllers/articles.controller');
 const incorrectMethod = require('../middleware/405-error');
 
@@ -19,6 +20,8 @@ articlesRouter
   .route('/:article_id')
   .get(getArticle)
   .patch(patchArticle)
+  .delete(removeArticle)
+
   .all(incorrectMethod);
 
 articlesRouter
